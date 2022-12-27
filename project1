@@ -1,0 +1,52 @@
+#include <iostream>
+using namespace std;
+
+class BoxedFloat {
+// constructors to be made public; it can be accessed by others
+private:
+    float internalFloat;
+public:
+//sets internalValue when the obj is created
+    BoxedFloat(float numPow)
+    {
+        internalFloat = numPow;
+    }
+//power function that returns [internalFloat^(numPow)]
+    float power (int y)
+    {
+        int pass = internalFloat;
+
+        for (int i = 1; i < y; i++){
+            pass = pass *internalFloat;
+        }
+        return pass;
+    }
+// returns internalFloat
+    float get() {
+        return internalFloat;
+    }
+    int get(int numPow)
+    {
+        if (numPow <= 0)
+            return internalFloat;
+        else
+            return -1;
+    }
+};
+int main()
+{
+    //This constructor should work and initialize to 3.0
+    BoxedFloat* boxedFloat = new BoxedFloat(3.0);
+
+    //Power function taking 2, meaning it should come out squared.
+    printf("%.2f\n",boxedFloat->power(2));
+
+    //Power function taking 5, meaning it should come out to 3.0^5.
+    printf("%.2f\n",boxedFloat->power(5));
+
+    //This should get and print the value as a float
+    printf("%.2f\n",boxedFloat->get());
+
+    //This should get and print the value as an integer
+    printf("%d\n",boxedFloat->get(0));
+}

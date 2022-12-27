@@ -1,0 +1,176 @@
+#include <iostream>
+using namespace std;
+
+// Do not edit the structure of the Node class
+template<class Type>
+class Node
+{
+public:
+    Node(Type value) { data = value; }
+    Node* nextNode;
+    Type data;
+};
+
+template <class Type>
+class LinkedList
+{
+public:
+    // instantiates the obj and initializes necessary fields
+    LinkedList(){
+        root = nullptr;
+        tail = nullptr;
+    };
+    //Returns ptr to root. if root is null returns it anyway
+    Node<Type>* first() { return root; };
+    //Returns ptr to tail. if tail is null returns it anyway
+    Node<Type>* last() { return tail; };
+    //returns true if there are no Nodes in the LL; false if there are any Nodes
+    bool isEmpty(){ return root == nullptr; };
+    //takes a ptr to a node of Type. & add it to last position in LL \\ push?
+    //ref tail and keep track of pointers
+    void addNode(Node<Type>* newNode){
+        if (isEmpty())
+        {
+            root = tail = newNode;
+            newNode -> nextNode = nullptr;
+        }
+        else
+        {
+            tail -> nextNode = newNode;
+            tail = tail-> nextNode;
+            tail -> nextNode = nullptr;
+        }
+    };
+    //same as prev func. takes an argument of the template type, Type and call prev function to do logic ?????
+    void addNode(Type n)
+    {
+         Node<Type>* newPtr = new Node<Type>(n);
+        addNode(newPtr);
+    };
+    //int arg given to this fun is in 0-index; getNodeAtPosition(0) = first item
+    //should be returned. returned data is a pointer to w/e current Node in
+    //current position in the LL
+    Node<Type>* getNodeAtPosition(int index)
+    {
+        Node<Type>* current = root;
+        Node<Type>* NodeAtIndex;
+        for ( int i = 0; i <= index; i++)
+        {
+            NodeAtIndex = current;
+            current = current -> nextNode;
+        }
+        return NodeAtIndex;
+    };
+
+    //1st arg to this func is a ptr to the Node to be added & 2nd is position to add it at.
+    //Fun will add the Node to the LL at the req 0-index position
+    void addNodeAtPosition(Node<Type>* newPosNode, int index)
+    {
+        if (index == 0)
+        {
+            newPosNode -> nextNode = root;
+            root = newPosNode;
+        }
+        else
+        {
+            Node<Type>* current = first();
+            Node<Type>* PrevNodePos;
+
+            for (int i = 0; i <= index-1; i++)
+            {
+                PrevNodePos = current;
+                current = current -> nextNode;
+
+            }
+
+            PrevNodePos -> nextNode = newPosNode;
+            newPosNode -> nextNode = current;
+        }
+    };
+
+    //Fun will remove Node at provided 0-index position on LL & explicitly delete the Node at
+    // this pos to make sure it does not get lost. Node prior to this one should have its
+    //outgoing pointer updated to account for this deletion.
+    void deleteNodeAtPosition(int indx)
+    {
+    Node<Type>* temp = first();
+    Node<Type>* PrevNodePos;
+
+    for (int i = 0; i <= indx-1; i++)
+    {
+        PrevNodePos = temp;
+        temp = temp -> nextNode;
+    }
+    Node<Type>* AfterNodePos = temp -> nextNode;
+    delete temp;
+    PrevNodePos -> nextNode = AfterNodePos;
+    };
+    // Do not edit this function
+
+    void printListValues()
+    {
+        Node<Type>* current = root;
+        if (isEmpty()) { cout << "Empty List"; }
+        while (current != nullptr)
+        {
+            cout << current->data << " -> ";
+            current = current->nextNode;
+        }
+        cout << endl;
+    }
+
+    // Do not edit this function
+    ~LinkedList()
+    {Node<Type>* current = root;
+        cout << "Deleting LinkedList" << endl;
+        while(current != nullptr)
+        {
+            Node<Type>* nodeBeingDeleted = current;
+            current = current->nextNode;
+            delete nodeBeingDeleted;
+        }
+        cout << "LinkedList Deleted" << endl;
+    }
+
+protected:
+    // first node in the Linked List
+    Node<Type>* root;
+    // last node in the Linked List
+    Node<Type>* tail;
+};
+
+
+//Expected Output:
+//
+//Empty List
+//5 -> 6 -> 2 -> 5 ->
+//5 -> 6 -> 9 -> 2 -> 5 ->
+//1 -> 5 -> 6 -> 9 -> 2 -> 5 ->
+//1 -> 5 -> 9 -> 2 -> 5 ->
+//First node: 1
+//Last node: 5
+//Requested node: 9
+//Deleting LinkedList
+//LinkedList Deleted
+//Run finished.
+int main()
+{
+    LinkedList<int>* linkedList = new LinkedList<int>();
+    linkedList->printListValues();
+    linkedList->addNode(5);
+    linkedList->addNode(6);
+    linkedList->addNode(2);
+    linkedList->addNode(new Node<int>(5));
+    linkedList->printListValues();
+    linkedList->addNodeAtPosition(new Node<int>(9), 2);
+    linkedList->printListValues();
+    linkedList->addNodeAtPosition(new Node<int>(1), 0);
+    linkedList->printListValues();
+    linkedList->deleteNodeAtPosition(2);
+    linkedList->printListValues();
+    cout << "First node: " << linkedList->first()->data << endl;
+    cout << "Last node: " << linkedList->last()->data << endl;
+    cout << "Requested node: " << linkedList->getNodeAtPosition(2)->data << endl;
+    delete linkedList;
+    cout << "Run finished." << endl;
+}

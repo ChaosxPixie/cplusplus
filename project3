@@ -1,0 +1,215 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <cmath>
+using namespace std;
+
+// Do not edit the Stack or Node structure
+class Node
+{
+public:
+    Node(int value) { data = value; }
+    Node* nextNode;
+    int data;
+};
+
+
+class Stack
+{
+public:
+    Stack() { top = nullptr; }
+
+    static void EmptyAccess()
+    {
+        cout << "Error trying to pop on empty stack" << endl;
+        exit(42);
+    }
+
+    bool isEmpty() { return top == nullptr; }
+
+    void push(int value)
+    {
+        if (isEmpty()) { top = new Node(value); }
+        else
+        {
+            Node* oldTop = top;
+            top = new Node(value);
+            top->nextNode = oldTop;
+        }
+    }
+
+    int pop()
+    {
+        if(isEmpty()) { Stack::EmptyAccess(); return 0;}
+        else
+        {
+            Node* topReturning = top;
+            top = top->nextNode;
+            int returningData = topReturning->data;
+            delete topReturning;
+            return returningData;
+        }
+    }
+
+protected:
+    Node* top;
+};
+// Do not edit the Stack or Node structure above
+
+void postfixStackAdd(Stack* stack)
+{
+    int total = stack -> pop() + stack -> pop();
+    stack -> push(total);
+}
+void postfixStackMultiAdd(Stack* stack)
+{
+    int multiadd = stack -> pop();
+    int sum = 0;
+    while (multiadd --> 0) {sum = sum + stack -> pop();}
+    stack -> push(sum);
+}
+void postfixStackMultiply(Stack* stack)
+{
+    int multiply = stack -> pop() * stack->pop();
+    stack ->push(multiply);
+}
+void postfixStackSubtract(Stack* stack)
+{
+    int x = stack -> pop();
+    int y = stack -> pop();
+    int takeaway = y - x;
+    stack -> push(takeaway);
+}
+void postfixStackDivide(Stack* stack)
+{
+    int x = stack -> pop();
+    int y = stack -> pop();
+    int divide = y/x;
+    stack ->push(divide);
+}
+void postfixStackPower(Stack* stack)
+{
+    int power = stack -> pop();
+    int root = stack -> pop();
+    int pow = 1;
+    while(power-- >  0) {pow = pow*root;}
+    stack -> push(pow);
+}
+void postfixStackFactorial(Stack* stack)
+{
+    int value = stack -> pop();
+    int factorial = 1;
+    while (value > 0) {factorial *= value--;}
+    stack ->push(factorial);
+}
+void postfixStackIncrement(Stack* stack)
+{
+    int increment = stack -> pop();
+    stack -> push(++increment);
+}
+void postfixStackModulo(Stack* stack)
+{
+    int x = stack -> pop();
+    int y = stack -> pop();
+    int modular = y % x;
+    stack -> push(modular);
+}
+void postfixStackDecrement(Stack* stack)
+{
+    int decrement = stack -> pop();
+    stack ->push(--decrement);
+}
+void postfixStackAbsoluteValue(Stack* stack)
+{
+    int value = stack -> pop();
+    value = (value > 0)? value : -value;
+    stack -> push(value);
+}
+
+// Don't edit any of the code below this.
+// All of this is just to process input
+// and print on command p.
+void postfixStackPrint(Stack* stack)
+{
+    cout << stack->pop() << endl;
+}
+void processTerm(string term, Stack* stack)
+{
+    if (term == "+")        postfixStackAdd(stack);
+
+    else if (term == "&+")  postfixStackMultiAdd(stack);
+    else if (term == "*")   postfixStackMultiply(stack);
+
+    else if (term == "-")   postfixStackSubtract(stack);
+
+    else if (term == "/")   postfixStackDivide(stack);
+
+    else if (term == "^")   postfixStackPower(stack);
+
+    else if (term == "!")   postfixStackFactorial(stack);
+
+    else if (term == "++")  postfixStackIncrement(stack);
+
+    else if (term == "%")   postfixStackModulo(stack);
+
+    else if (term == "--")  postfixStackDecrement(stack);
+
+    else if (term == "||")  postfixStackAbsoluteValue(stack);
+
+    else if (term == "p")   postfixStackPrint(stack);
+
+    else stack->push(stoi(term));
+}
+
+
+void processPostfixExpression(string inputString)
+{
+    Stack* stack = new Stack();
+
+    char space = ' ';
+    stringstream sstream(inputString);
+    string term;
+
+    while (getline(sstream, term, space)) { processTerm(term, stack); }
+}
+int main()
+{
+    string postfixInputString;
+    getline(cin, postfixInputString);
+    processPostfixExpression(postfixInputString);
+}
+
+// Input and Output Samples
+//
+// INPUT: 4 5 + p
+//OUTPUT: 9
+//
+// INPUT: 16 4 / p
+//OUTPUT: 4
+//
+// INPUT: 3 2 ^ p
+//OUTPUT: 9
+//
+// INPUT: 8 3 % p
+//OUTPUT: 2
+//
+// INPUT: 2 4 + 60 + 33 / p
+//OUTPUT: 2
+//
+// INPUT: 4 2 3 + 4 * + p
+//OUTPUT: 24
+//
+// INPUT: 2 4 3 5 - || * + p
+//OUTPUT: 10
+//
+// INPUT: 3 4 2 3 0 4 &+ * p
+//OUTPUT: 27
+//
+// INPUT: 4 ! p
+//OUTPUT: 24
+//
+// INPUT: 7 2 ++ * p
+//OUTPUT: 21
+//
+// INPUT: 7 2 -- * p
+//OUTPUT: 7

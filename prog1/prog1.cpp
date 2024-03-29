@@ -1,10 +1,3 @@
-//Name: Fuentes, Malana
-//Email: mvu21@lsu.edu
-//Project: PA-1 (Multithreadding)
-//Instructor: Feng Chen
-//Class: cs4103-sp24
-//Server Login: cs410327
-
 #include <iostream>
 #include <fstream>
 #include <vector>

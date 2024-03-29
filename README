@@ -1,0 +1,85 @@
+		=============================================================================================
+
+						Name: Fuentes, Malana
+						Email: mvu21@lsu.edu
+						Project: PA-1 (Multithreadding)
+						Instructor: Feng Chen
+						Class: cs4103-sp24
+						Server Login: cs410327
+
+		============================================================================================
+
+		This program simulates a web server handling jobs from multiple clients. It is implemented in C++, 
+		utilizing the condition_variable, threads, and mutex libraries to generate the simulation.
+
+		## Compilation Instructions:
+		
+		run following command:
+		
+			g++ -o multithreader prog1.cpp -lpthread
+
+		## Execution:
+	   	
+			./multithreader <#clientThreads> <#serverThreads> <#jobPoolEntries> <total#Jobs> <ProcessTime>
+
+			e.g. ./multithreader 2 3 10 100 5
+
+		## Expected output:
+		
+		Once the program sucessfully completes it will output:
+	
+			"Job processesing completed!" 
+			"Client <index> created <num jobs> jobs."
+			"Server <index> processed <num jobs> jobs."
+			"Please check the log file service.log details."
+
+		The service log does not overwrite itself, each time the program is run, the service log will 
+		append to the previously documented logs. 
+
+		Each record of the log file is formatted as follows: 
+		
+		<Timestamp (nanoseconds)> <Thread type (“Client” or “Server”)> <Thread ID> <Job Pool Entry Index> <Job ID>.
+		
+		
+				SOUCES used for learning: 
+		https://www.geeksforgeeks.org/thread-functions-in-c-c/
+		https://www.geeksforgeeks.org/cpp-cheatsheet/
+
+		
+		
+		Below is a detailed description of each class, and functions within the program. 
+		I moved them here because they made the program look bulky.
+
+Class JobPool represents the Job pool. It declares variables, initializes the job pool, 
+and defines the functions: addJob, removeJob, printClientJobs, printServerJobs, and logEvent.
+
+The addJob function adds a job to the pool, locks the mutex lock, waits for space in the pool,
+and when space is available, it adds jobs to the pool, sequentially increments the job counter, 
+and logs client events. The condition variable notifies all threads of status.
+
+The removeJob function removes a job from the pool, locks the mutex lock, waits for space, 
+gets the job ID, removes the job from the pool, increments the processed job counter, and logs 
+the events. The condition variable calls notify_all, which notifies all the threads of status.
+
+The logEvent function logs an event to the file. It gets the input and output streams
+and appends them to the log.
+
+The processJob function simulates job processing and processing time by pausing the
+current thread for a user-inputted duration specified in milliseconds.
+
+The clientFunc function represents client thread behavior; it adds a job to the pool and simulates 
+job creation time. The loop runs through the total number of jobs, adding job[i] associated with client[id],
+and then makes the current thread pause for a user-inputted duration specified in milliseconds.
+ 
+The serverFunc function represents server thread behavior; it removes a job from the pool, processes it, 
+and simulates processing time. The loop runs through the total number of jobs, removes a (assumed) completed job
+from the job pool and assigns its ID. Then it checks to make sure the job was removed (if jobID = -1), 
+then calls processJob to process the job and pauses the current thread for a user-inputted duration specified
+in milliseconds.
+
+The main function gathers user input in the form of:
+./multithreadder <#clientThreads> <#serverThreads> <#poolEntries> <#totalJobs> <processingTime>, 
+checks for the correct number of args, and positive numbers for input parameters, and throws errors if needed. 
+It creates the job pool and vectors to store client and server thread, creates threads,
+waits for them to complete execution, logs results. If exit with no error, confirmation is sent to the
+user prompting them to check the server logs for further details.
